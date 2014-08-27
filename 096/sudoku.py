@@ -29,6 +29,7 @@ class Board:
 
     old_board = deepcopy(self.board)
     self.constrain()
+    self.cross_hatch()
     while not np.array_equal(old_board, self.board):
       old_board = deepcopy(self.board)
       self.constrain()
@@ -112,6 +113,31 @@ class Board:
                 self.board[i, j, k-1] = k
                 continue
             self.board[i, j, k-1] = 0
+
+  def cross_hatch(self):
+    '''Fill in hidden singles (i.e., cells where there is only one possible
+    cell for a candidate).'''
+    # Check rows
+    for i in range(9):
+      for k in range(1, 10):
+        cell_possibilities = []
+        for j in range(9):
+          if k in self.board[i, j]:
+            cell_possibilities.append(j)
+        if len(cell_possibilities) == 1:
+          self.board[i, cell_possibilities[0]] = [0 if elem != k else k
+            for elem in range(1, 10)]
+    
+    # Check columns
+    for j in range(9):
+      for k in range(1, 10):
+        cell_possibilities = []
+        for i in range(9):
+          if k in self.board[i, j]:
+            cell_possibilities.append(i)
+        if len(cell_possibilities) == 1:
+          self.board[cell_possibilities[0], j] = [0 if elem != k else k
+            for elem in range(1, 10)]
 
   def print_board(self):
     '''Print the board in a pleasing way.'''
