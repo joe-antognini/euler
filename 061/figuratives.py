@@ -8,6 +8,9 @@
 # which each polygonal type is represented by a different number in the set.
 #
 
+import time
+start_time = time.time()
+
 # First generate the figurative numbers
 N = 150 # Some large number...
 lb = 1000
@@ -22,14 +25,11 @@ hexagons = [n*(2*n-1) for n in range(N)]
 hexagons = [elem for elem in hexagons if lb <= elem < ub]
 heptagons = [n*(5*n-3)/2 for n in range(N)]
 heptagons = [elem for elem in heptagons if lb <= elem < ub]
-octagons = [n*(3*N-2) for n in range(N)]
+octagons = [n*(3*n-2) for n in range(N)]
 octagons = [elem for elem in octagons if lb <= elem < ub]
 
-figuratives = (triangles + squares + pentagons + hexagons + heptagons +
-                octagons)
-
 figures = [squares, pentagons, hexagons, heptagons, octagons]
-cycle = [triangles] # The order of the cycle
+#figures = [squares, pentagons]
 
 def split_integer(n):
   '''Return a list with the first two digits and last two digits.'''
@@ -64,17 +64,20 @@ def next_link(cur_figures, prev, first_half):
     other_figures = [elem for elem in cur_figures if elem != figure]
     while split_integer(figure[i])[0] == prev:
       next = split_integer(figure[i])[1]
-      print figure[i]
       if next_link(other_figures, next, first_half):
-        print figure[i]
+        global total
+        total += figure[i]
         return True
       i += 1  
 
   return False
 
 for elem in triangles:
+  total = 0
   prev, next = split_integer(elem)
-  print 'triangle:', elem
   if next_link(figures, next, prev):
-    print elem
+    total += elem
     break
+
+print "Solution:", total
+print "Running time:", time.time() - start_time, "s"
